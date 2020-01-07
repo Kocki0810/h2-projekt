@@ -73,6 +73,14 @@ namespace h2_nibe_project
 
             setup.AddStand(stand);
         }
+        public void RemoveStand(Stands stand)
+        {
+            setup.RemoveStand(stand);
+        }
+        public void RemoveSwitch(NetworkSwitch @switch)
+        {
+            setup.RemoveSwitch(@switch);
+        }
     }
     #endregion
     class UserInput
@@ -88,6 +96,10 @@ namespace h2_nibe_project
                 input = Console.ReadLine();
             }
         }
+        public void Clear()
+        {
+            Console.Clear();
+        }
         public void Start()
         {
             Console.WriteLine("Press 1 to create or 2 to show");
@@ -100,10 +112,12 @@ namespace h2_nibe_project
                 input = Console.ReadLine();
                 if(input == "1")
                 {
+                    Clear();
                     ShowAddStand();
                 }
                 else if(input == "2")
                 {
+                    Clear();
                     ShowAddSwitch();
                 }
             }
@@ -114,10 +128,12 @@ namespace h2_nibe_project
                 input = Console.ReadLine();
                 if(input == "1")
                 {
+                    Clear();
                     ShowStands();
                 }
                 else if(input == "2")
                 {
+                    Clear();
                     ShowSwitch();
                 }
             }
@@ -129,11 +145,11 @@ namespace h2_nibe_project
             Console.WriteLine("Write the following with your own input");
             Console.WriteLine("Id, name, amount of switches, id of the switches(this should be comma seperated without spaces if more than 1");
             string standInfo = Console.ReadLine();
-            string[] idSplit = { "" };
+
             string[] standSplit = standInfo.Split(" ", 4);
             try
             {
-                idSplit = standSplit[3].Split(",");
+                string[] idSplit = standSplit[3].Split(",");
                 Controller.CreateStand(standSplit[0], standSplit[1], standSplit[2], idSplit);
 
             }
@@ -162,7 +178,7 @@ namespace h2_nibe_project
         }
         public void ShowRemoveSwitch()
         {
-            List<NetworkSwitch> @switch = Controller.setup.RemoveSwitch();
+            
 
         }
         public void ShowStands()
