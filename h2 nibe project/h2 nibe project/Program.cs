@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Principal;
 namespace h2_nibe_project
 {
     #region data controllers etc.
@@ -48,8 +50,22 @@ namespace h2_nibe_project
             return standSetup;
         }
     }
+    class Logging
+    {
+        string username = Environment.UserName;
+        string file = "C:\\Users\\" + username + "\\Desktop\\Log";
+        public void LogToFile(string text)
+        {
+            if(!File.Exists("C:\\Users\\Desktop\\Log"))
+            {
+                File.Create("C:\\Users\\" + username + "\\Desktop\\Log");
+            }
+            File.AppendAllText("C:\\Users\\Desktop\\Log", text);
+        }
+    }
     class SetupController
     {
+        public Logging log = new Logging();
         public SetupList setup = new SetupList();
         public void CreateSwitch(string id, string port)
         {
@@ -58,7 +74,7 @@ namespace h2_nibe_project
                 SwitchId = id,
                 PortAmount = port
             };
-
+            log.LogToFile("Added swith with id " + id + " and port amount " + port);
             setup.AddSwitch(@switch);
         }
         public void CreateStand(string name, string bodId, string amount, string[] switchId)
