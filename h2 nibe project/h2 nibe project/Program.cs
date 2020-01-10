@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Principal;
 namespace h2_nibe_project
 {
     #region data controllers etc.
@@ -52,20 +51,17 @@ namespace h2_nibe_project
     }
     class Logging
     {
-        string username = Environment.UserName;
-        string file = "C:\\Users\\" + username + "\\Desktop\\Log";
+        readonly public string username = Environment.UserName;
         public void LogToFile(string text)
         {
-            if(!File.Exists("C:\\Users\\Desktop\\Log"))
-            {
-                File.Create("C:\\Users\\" + username + "\\Desktop\\Log");
-            }
-            File.AppendAllText("C:\\Users\\Desktop\\Log", text);
+            Directory.CreateDirectory("C:\\Users\\" + username + "\\Desktop\\nibe_log");
+        
+            File.AppendAllText("C:\\Users\\" + username + "\\Desktop\\nibe_log\\Log.txt", text);
         }
     }
     class SetupController
     {
-        public Logging log = new Logging();
+        Logging log = new Logging();
         public SetupList setup = new SetupList();
         public void CreateSwitch(string id, string port)
         {
@@ -74,11 +70,12 @@ namespace h2_nibe_project
                 SwitchId = id,
                 PortAmount = port
             };
-            log.LogToFile("Added swith with id " + id + " and port amount " + port);
+            log.LogToFile(DateTime.Now + " " + log.username + " Added switch with id " + id + " and port amount " + port + "\n");
             setup.AddSwitch(@switch);
         }
         public void CreateStand(string name, string bodId, string amount, string[] switchId)
         {
+            string id = "";
             Stands stand = new Stands
             {
                 Name = name,
@@ -86,7 +83,11 @@ namespace h2_nibe_project
                 SwitchAmount = amount,
                 SwitchId = switchId
             };
-
+            foreach (string x in switchId)
+            {
+                id += x + " ";
+            }
+            log.LogToFile(DateTime.Now + " " + log.username + " Added stand with name " + name + " switch amount " + amount + " and switch id's " + id + "\n");
             setup.AddStand(stand);
         }
         public void RemoveStand(Stands stand)
@@ -101,6 +102,7 @@ namespace h2_nibe_project
     #endregion
     class UserInput
     {
+        protected int countSwitch = 1;
         protected int output;
         SetupController Controller = new SetupController();
         protected string input;
@@ -146,13 +148,22 @@ namespace h2_nibe_project
                 {
                     Clear();
                     ShowStands();
+                    Console.WriteLine("If you want to edit one of the elements press its number else press enter");
+
                 }
                 else if(input == "2")
                 {
                     Clear();
                     ShowSwitch();
+                    Console.WriteLine("If you want to edit one of the elements press its number else press enter");
+                    if (Int32.TryParse(input, out output))
+                    {
+                        output = -1;
+
+                    }
                 }
             }
+            
             Console.ReadKey(true);
             Start();
         }
@@ -214,10 +225,12 @@ namespace h2_nibe_project
         }
         public void ShowSwitch()
         {
+            
             List<NetworkSwitch> @switch = Controller.setup.GetSwitches();
             foreach (NetworkSwitch i in @switch)
             {
-                Console.WriteLine(i.SwitchId + " " + i.PortAmount);
+                Console.WriteLine(countSwitch + " " + i.SwitchId + " " + i.PortAmount);
+                countSwitch++;
             }
         }
     }
